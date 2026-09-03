@@ -34,9 +34,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           id={inputId}
-          className={`w-full text-sm bg-white border ${
+          className={`w-full text-base sm:text-sm bg-white border ${
             error ? 'border-rose-500 focus:ring-rose-200' : 'border-slate-300 focus:border-slate-800 focus:ring-slate-100'
-          } rounded-md py-2 ${icon ? 'pl-9' : 'pl-3'} ${rightElement ? 'pr-9' : 'pr-3'} text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${className}`}
+          } rounded-md py-2.5 sm:py-2 ${icon ? 'pl-9' : 'pl-3'} ${rightElement ? 'pr-9' : 'pr-3'} text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${className}`}
           {...props}
         />
         {rightElement && (

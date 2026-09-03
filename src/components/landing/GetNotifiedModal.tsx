@@ -78,7 +78,7 @@ export const GetNotifiedModal: React.FC<GetNotifiedModalProps> = ({ isOpen, onCl
           <div className="space-y-1">
             <label className="block text-xs font-semibold text-slate-700">Your Primary Role</label>
             <select
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-colors"
+              className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-colors"
               defaultValue="Admin / Manager"
             >
               <option value="Admin / Manager">Transport Admin / Logistics Manager</option>
