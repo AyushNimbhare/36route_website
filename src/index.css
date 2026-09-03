@@ -16,12 +16,28 @@
   }
 }
 
-/* Hide scrollbars when body overflow is hidden */
-body[style*="overflow: hidden"]::-webkit-scrollbar {
+/* Hide scrollbars and prevent rubber-banding when curtain is active or body is locked */
+html.curtain-locked,
+body.curtain-locked {
+  overflow: hidden !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  position: fixed !important;
+  width: 100% !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+body[style*="overflow: hidden"]::-webkit-scrollbar,
+html.curtain-locked::-webkit-scrollbar,
+body.curtain-locked::-webkit-scrollbar {
   display: none !important;
 }
 
-body[style*="overflow: hidden"] {
+body[style*="overflow: hidden"],
+html.curtain-locked,
+body.curtain-locked {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }

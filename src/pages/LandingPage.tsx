@@ -1,152 +1,141 @@
-import React, { useState } from 'react';
-import { Button } from '../components/ui/Button';
-import { GetNotifiedModal } from '../components/landing/GetNotifiedModal';
-import { HeroRouteIllustration } from '../components/landing/HeroRouteIllustration';
-import { SingleHorizontalFlow } from '../components/landing/SingleHorizontalFlow';
+import React, { useState, useEffect } from 'react';
 import { BrandLogo } from '../components/common/BrandLogo';
-import { CurtainReveal } from '../components/landing/CurtainReveal';
-import { Sparkles, RefreshCw, Play } from 'lucide-react';
+import { CountdownTimer } from '../components/landing/CountdownTimer';
+import { Volume2, VolumeX, Lock } from 'lucide-react';
+import { useToast } from '../components/common/Toast';
+import { soundEngine } from '../utils/soundEffects';
 
 export const LandingPage: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  // Starts locked behind curtain reveal overlay
-  const [isCurtainOpen, setIsCurtainOpen] = useState(false);
+  const { showToast } = useToast();
+  const [isSoundMuted, setIsSoundMuted] = useState(false);
+
+  useEffect(() => {
+    // Keep viewport clean and non-scrollable
+    document.documentElement.classList.add('curtain-locked');
+    document.body.classList.add('curtain-locked');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.documentElement.classList.remove('curtain-locked');
+      document.body.classList.remove('curtain-locked');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  useEffect(() => {
+    soundEngine.setMuted(isSoundMuted);
+  }, [isSoundMuted]);
+
+  const toggleSound = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const nextMuted = !isSoundMuted;
+    setIsSoundMuted(nextMuted);
+    soundEngine.setMuted(nextMuted);
+    if (!nextMuted) {
+      soundEngine.playPreviewSound();
+      showToast('Sound effects enabled', 'info');
+    } else {
+      showToast('Sound effects muted', 'info');
+    }
+  };
+
+  const handleLockedClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    showToast('36Route unveils on 5th October 2026 IST. Countdown in progress!', 'info');
+    soundEngine.playCountdownTick(1);
+  };
 
   return (
-    <div className={`min-h-screen min-h-[100dvh] w-full overflow-x-hidden ${isCurtainOpen ? 'bg-slate-50' : 'bg-slate-950'} text-slate-900 flex flex-col font-sans antialiased selection:bg-slate-900 selection:text-white relative transition-colors duration-700`}>
-      {/* 0. THEATRICAL CURTAIN REVEAL OVERLAY WITH LIVE TIMER */}
-      <CurtainReveal
-        isOpen={isCurtainOpen}
-        onToggle={() => setIsCurtainOpen(!isCurtainOpen)}
-      />
-
-      {/* 1. HEADER */}
-      <header className="h-14 sm:h-16 border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40 px-3.5 sm:px-8 flex items-center justify-between">
-        <div className="max-w-6xl w-full mx-auto flex items-center justify-between">
-          {/* Left: Official 36Route Cutout Logo */}
-          <div className="flex items-center">
-            <BrandLogo size="sm" />
-          </div>
-
-          {/* Right Controls: Replay Curtain Reveal + Coming Soon Badge */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Replay Curtain Button */}
-            <button
-              onClick={() => setIsCurtainOpen(false)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-amber-50 hover:text-amber-800 border border-slate-200 hover:border-amber-300 rounded-xl transition-all duration-200 shadow-subtle active:scale-95"
-              title="Close and replay curtain reveal animation"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-amber-600" />
-              <span className="hidden xs:inline">Replay Reveal</span>
-              <span className="xs:hidden">Replay</span>
-            </button>
-
-            {/* Coming Soon Status Badge */}
-            <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200 shadow-subtle">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-              Coming Soon
-            </span>
-          </div>
+    <div className="fixed inset-0 w-full h-full min-h-screen min-h-[100dvh] overflow-hidden bg-slate-950 text-slate-900 select-none flex items-center justify-center">
+      {/* 1. THEATER STAGE BACKDROP WITH CLOSED CURTAINS */}
+      <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none bg-slate-950">
+        {/* Left Curtain Half - 52vw coverage with overlap */}
+        <div
+          className="absolute inset-y-0 -left-[1vw] w-[52vw] z-10 shadow-2xl bg-slate-950"
+          style={{
+            backgroundImage: 'url("/curtain.png")',
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/50" />
+          <div className="absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-black/80 to-transparent" />
         </div>
-      </header>
 
-      {/* Main Content Container */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-12 flex flex-col items-center justify-start space-y-8 sm:space-y-12">
-        {/* 2. HERO — MAIN FOCUS WITH STAGE SPOTLIGHT */}
-        <section className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-5 sm:p-10 text-center max-w-3xl w-full mx-auto border border-slate-200/90 shadow-card bg-white">
-          {/* Subtle Aerial Transportation Background Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 pointer-events-none"
-            style={{ backgroundImage: 'url("/hero-bg.png")' }}
-          />
-          {/* Light Overlay for Crisp Contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-slate-50/80 to-white/95 backdrop-blur-[1px] pointer-events-none" />
+        {/* Right Curtain Half - 52vw coverage with overlap */}
+        <div
+          className="absolute inset-y-0 -right-[1vw] w-[52vw] z-10 shadow-2xl bg-slate-950"
+          style={{
+            backgroundImage: 'url("/curtain.png")',
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-l from-black/60 via-transparent to-black/50" />
+          <div className="absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-black/80 to-transparent" />
+        </div>
 
-          {/* Hero Content Layer */}
-          <div className="relative z-10 text-center max-w-2xl mx-auto space-y-4 sm:space-y-5">
-            {/* Official 36Route Emblem + Wordmark Brand Identity */}
-            <div className="flex justify-center">
-              <BrandLogo size="lg" />
-            </div>
+        {/* Subtle Stage Top Shadow Vignette */}
+        <div className="absolute top-0 inset-x-0 h-20 sm:h-28 z-15 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
+      </div>
 
-            {/* Small Status Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/90 border border-slate-200/90 text-slate-700 text-[10px] sm:text-xs font-semibold tracking-wide backdrop-blur-sm max-w-full truncate">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-              SMART EMPLOYEE COMMUTE PLATFORM
-            </div>
+      {/* 2. AUDIO MUTE / UNMUTE CONTROL (Top-Right) */}
+      <button
+        onClick={toggleSound}
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-40 p-2.5 sm:p-3 rounded-full bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700/80 backdrop-blur-md transition-colors active:scale-90 touch-manipulation cursor-pointer"
+        title={isSoundMuted ? 'Unmute theater audio' : 'Mute theater audio'}
+        aria-label={isSoundMuted ? 'Unmute theater audio' : 'Mute theater audio'}
+      >
+        {isSoundMuted ? (
+          <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+        ) : (
+          <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
+        )}
+      </button>
 
-            {/* Main Heading */}
-            <h1 className="font-display text-2xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 uppercase">
-              COMING SOON
-            </h1>
+      {/* 3. CENTER STAGE SPOTLIGHT & FLOATING COMING SOON CARD */}
+      <div className="relative z-30 flex flex-col items-center justify-center p-3.5 sm:p-6 text-center max-w-full">
+        {/* Radial Stage Spotlight Glow */}
+        <div className="absolute w-[280px] h-[280px] sm:w-[540px] sm:h-[540px] rounded-full bg-gradient-radial from-amber-200/20 via-orange-500/10 to-transparent blur-2xl sm:blur-3xl pointer-events-none animate-pulse" />
 
-            {/* Supporting Text */}
-            <p className="text-xs sm:text-base text-slate-600 max-w-lg mx-auto leading-relaxed font-normal px-1">
-              36Route empowers organizations with intelligent corridor routing, real-time trip visibility, and unified fleet management — all in one place.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => setIsModalOpen(true)}
-                className="w-full sm:w-auto shadow-md px-7 py-3 text-xs sm:text-sm active:scale-98 transition-transform"
-                icon={<Sparkles className="w-4 h-4 text-emerald-400" />}
-              >
-                Get Priority Access
-              </Button>
-
-              <button
-                onClick={() => setIsCurtainOpen(false)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-subtle active:scale-98"
-              >
-                <Play className="w-3.5 h-3.5 text-orange-500" />
-                <span>Watch Reveal Again</span>
-              </button>
-            </div>
+        {/* Center Stage Card */}
+        <div
+          className="relative z-10 w-[94vw] max-w-md sm:max-w-lg bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl flex flex-col items-center justify-center space-y-4 sm:space-y-5 touch-manipulation"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* 36Route Cutout Logo */}
+          <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-white/95 shadow-md border border-slate-200">
+            <BrandLogo size="md" />
           </div>
-        </section>
 
-        {/* 3. HERO VISUAL (Positioned cleanly below main hero card) */}
-        <section className="w-full">
-          <HeroRouteIllustration />
-        </section>
+          {/* Live Countdown Timer */}
+          <div className="py-1 w-full flex justify-center">
+            <CountdownTimer />
+          </div>
 
-        {/* 4. PRODUCT INTRODUCTION ("One platform. One simpler commute.") */}
-        <section className="space-y-3 sm:space-y-6 pt-2 text-center max-w-3xl w-full mx-auto">
-          <div className="space-y-2 sm:space-y-3 max-w-xl mx-auto px-2">
-            <h2 className="font-display text-lg sm:text-3xl font-bold tracking-tight text-slate-900">
-              One platform. One simpler commute.
+          {/* Title */}
+          <div className="py-0.5">
+            <h2 className="font-['Syne',sans-serif] text-xl sm:text-3xl font-black text-white tracking-wider uppercase">
+              <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                COMING SOON
+              </span>
             </h2>
-            <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
-              36Route brings the essential parts of employee transportation together — from routes and trips to vehicles, drivers and employees.
-            </p>
           </div>
 
-          {/* Clean Horizontal Flow Visual */}
-          <SingleHorizontalFlow />
-        </section>
-      </main>
-
-      {/* FOOTER */}
-      <footer className="border-t border-slate-200 bg-white py-6 sm:py-10 px-4 sm:px-8 mt-6 sm:mt-12">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
-          <div>
-            <div className="flex items-center justify-center sm:justify-start mb-1">
-              <BrandLogo size="sm" />
-            </div>
-            <p className="text-[11px] sm:text-xs text-slate-500">Smart employee transportation, simplified.</p>
-          </div>
-
-          <p className="text-[11px] sm:text-xs text-slate-400 font-medium">
-            © 2026 36Route. All rights reserved.
-          </p>
+          {/* Locked Status Button */}
+          <button
+            onClick={handleLockedClick}
+            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 sm:px-10 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm bg-slate-900/90 text-amber-200 border border-amber-500/40 shadow-lg hover:border-amber-400 hover:bg-slate-900 transition-all duration-300 active:scale-95 touch-manipulation cursor-pointer"
+          >
+            <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 shrink-0 animate-pulse" />
+            <span>LOCKED</span>
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-white/20 pointer-events-none" />
+          </button>
         </div>
-      </footer>
-
-      {/* Get Notified Modal */}
-      <GetNotifiedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      </div>
     </div>
   );
 };
+
