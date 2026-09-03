@@ -75,26 +75,26 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
   ];
 
   return (
-    <div className={`flex items-center justify-center gap-1.5 sm:gap-3 max-w-full select-none ${className}`}>
+    <div className={`flex items-center justify-center gap-1 sm:gap-2.5 max-w-full select-none ${className}`}>
       {timeBlocks.map((block, idx) => (
         <React.Fragment key={block.label}>
           <div className="flex flex-col items-center">
             {/* Mobile-optimized futuristic Zen Dots timer card */}
-            <div className="relative w-13 h-13 min-w-[50px] xs:w-14 xs:h-14 sm:w-20 sm:h-20 rounded-xl bg-slate-900/90 border border-slate-800 shadow-subtle flex items-center justify-center overflow-hidden">
-              <span className="font-['Zen_Dots',cursive] text-base xs:text-lg sm:text-2xl font-normal tracking-wide text-white">
+            <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-slate-900/90 border border-slate-800 shadow-subtle flex items-center justify-center overflow-hidden">
+              <span className="font-['Zen_Dots',cursive] text-sm sm:text-xl font-normal tracking-wide text-white">
                 {String(block.value).padStart(2, '0')}
               </span>
             </div>
 
             {/* Label */}
-            <span className="mt-1 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-widest text-slate-400">
+            <span className="mt-1 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider sm:tracking-widest text-slate-400">
               {block.label}
             </span>
           </div>
 
           {/* Colon Separator */}
           {idx < timeBlocks.length - 1 && (
-            <div className="flex items-center justify-center pb-4 sm:pb-5 text-slate-500 font-['Zen_Dots',cursive] text-sm sm:text-xl opacity-75">
+            <div className="flex items-center justify-center pb-3.5 sm:pb-4 text-slate-500 font-['Zen_Dots',cursive] text-xs sm:text-base opacity-75">
               :
             </div>
           )}

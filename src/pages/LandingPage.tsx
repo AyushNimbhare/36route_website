@@ -49,42 +49,23 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full min-h-screen min-h-[100dvh] overflow-hidden bg-slate-950 text-slate-900 select-none flex items-center justify-center">
-      {/* 1. THEATER STAGE BACKDROP WITH CLOSED CURTAINS */}
-      <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none bg-slate-950">
-        {/* Left Curtain Half - 52vw coverage with overlap */}
-        <div
-          className="absolute inset-y-0 -left-[1vw] w-[52vw] z-10 shadow-2xl bg-slate-950"
-          style={{
-            backgroundImage: 'url("/curtain.png")',
-            backgroundSize: '100% 100%',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/50" />
-          <div className="absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-black/80 to-transparent" />
-        </div>
-
-        {/* Right Curtain Half - 52vw coverage with overlap */}
-        <div
-          className="absolute inset-y-0 -right-[1vw] w-[52vw] z-10 shadow-2xl bg-slate-950"
-          style={{
-            backgroundImage: 'url("/curtain.png")',
-            backgroundSize: '100% 100%',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-l from-black/60 via-transparent to-black/50" />
-          <div className="absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-black/80 to-transparent" />
-        </div>
-
-        {/* Subtle Stage Top Shadow Vignette */}
-        <div className="absolute top-0 inset-x-0 h-20 sm:h-28 z-15 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
+      {/* 1. SINGLE UNIFIED THEATER STAGE BACKDROP (No split seam, authentic ratio on mobile & desktop) */}
+      <div
+        className="absolute inset-0 z-10 bg-cover bg-center bg-no-repeat pointer-events-none"
+        style={{
+          backgroundImage: 'url("/curtain.png")',
+          backgroundPosition: 'center center',
+          backgroundSize: 'cover',
+        }}
+      >
+        {/* Subtle Vignette overlay for depth and contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70" />
       </div>
 
-      {/* 2. AUDIO MUTE / UNMUTE CONTROL (Top-Right) */}
+      {/* 2. AUDIO MUTE / UNMUTE CONTROL (Top-Right with Safe-Area Inset) */}
       <button
         onClick={toggleSound}
-        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-40 p-2.5 sm:p-3 rounded-full bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700/80 backdrop-blur-md transition-colors active:scale-90 touch-manipulation cursor-pointer"
+        className="fixed top-safe right-safe z-40 p-2.5 sm:p-3 rounded-full bg-slate-900/85 text-slate-300 hover:text-white border border-slate-700/80 backdrop-blur-md transition-colors active:scale-90 touch-manipulation cursor-pointer shadow-lg"
         title={isSoundMuted ? 'Unmute theater audio' : 'Mute theater audio'}
         aria-label={isSoundMuted ? 'Unmute theater audio' : 'Mute theater audio'}
       >
@@ -96,40 +77,40 @@ export const LandingPage: React.FC = () => {
       </button>
 
       {/* 3. CENTER STAGE SPOTLIGHT & FLOATING COMING SOON CARD */}
-      <div className="relative z-30 flex flex-col items-center justify-center p-3.5 sm:p-6 text-center max-w-full">
+      <div className="relative z-30 flex flex-col items-center justify-center p-3 text-center max-w-full my-auto">
         {/* Radial Stage Spotlight Glow */}
-        <div className="absolute w-[280px] h-[280px] sm:w-[540px] sm:h-[540px] rounded-full bg-gradient-radial from-amber-200/20 via-orange-500/10 to-transparent blur-2xl sm:blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute w-[260px] h-[260px] sm:w-[500px] sm:h-[500px] rounded-full bg-gradient-radial from-amber-200/20 via-orange-500/10 to-transparent blur-2xl sm:blur-3xl pointer-events-none animate-pulse" />
 
-        {/* Center Stage Card */}
+        {/* Center Stage Card (Proportionally optimized for all mobile screen ratios) */}
         <div
-          className="relative z-10 w-[94vw] max-w-md sm:max-w-lg bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl flex flex-col items-center justify-center space-y-4 sm:space-y-5 touch-manipulation"
+          className="relative z-10 w-[88vw] max-w-[340px] sm:max-w-md bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-2xl flex flex-col items-center justify-center space-y-3 sm:space-y-4 touch-manipulation"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 36Route Cutout Logo */}
-          <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-white/95 shadow-md border border-slate-200">
+          <div className="p-1 sm:p-1.5 rounded-xl bg-white/95 shadow-md border border-slate-200">
             <BrandLogo size="md" />
           </div>
 
           {/* Live Countdown Timer */}
-          <div className="py-1 w-full flex justify-center">
+          <div className="py-0.5 w-full flex justify-center">
             <CountdownTimer />
           </div>
 
           {/* Title */}
           <div className="py-0.5">
-            <h2 className="font-['Syne',sans-serif] text-xl sm:text-3xl font-black text-white tracking-wider uppercase">
+            <h2 className="font-['Syne',sans-serif] text-lg sm:text-2xl font-black text-white tracking-wider uppercase">
               <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
                 COMING SOON
               </span>
             </h2>
           </div>
 
-          {/* Locked Status Button */}
+          {/* Locked Status Button (Centered pill on both mobile & desktop) */}
           <button
             onClick={handleLockedClick}
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3 sm:px-10 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm bg-slate-900/90 text-amber-200 border border-amber-500/40 shadow-lg hover:border-amber-400 hover:bg-slate-900 transition-all duration-300 active:scale-95 touch-manipulation cursor-pointer"
+            className="group relative inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-8 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm bg-slate-900/90 text-amber-200 border border-amber-500/40 shadow-lg hover:border-amber-400 hover:bg-slate-900 transition-all duration-300 active:scale-95 touch-manipulation cursor-pointer"
           >
-            <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 shrink-0 animate-pulse" />
+            <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0 animate-pulse" />
             <span>LOCKED</span>
             <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-white/20 pointer-events-none" />
           </button>
