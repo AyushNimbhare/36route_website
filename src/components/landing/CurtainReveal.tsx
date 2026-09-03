@@ -3,6 +3,7 @@ import { BrandLogo } from '../common/BrandLogo';
 import { CountdownTimer, LAUNCH_DATE_IST } from './CountdownTimer';
 import { Volume2, VolumeX, ChevronRight, Play, Lock } from 'lucide-react';
 import { useToast } from '../common/Toast';
+import { soundEngine } from '../../utils/soundEffects';
 
 interface CurtainRevealProps {
   isOpen: boolean;
@@ -29,55 +30,36 @@ export const CurtainReveal: React.FC<CurtainRevealProps> = ({ isOpen, onToggle }
     };
   }, [isOpen]);
 
-  // Web Audio API Theater Chime Sound
-  const playTheaterSound = () => {
-    if (isSoundMuted) return;
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
+  useEffect(() => {
+    soundEngine.setMuted(isSoundMuted);
+  }, [isSoundMuted]);
 
-      // Soft Sweep Gain
-      const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(0.15, ctx.currentTime);
-      masterGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.2);
-      masterGain.connect(ctx.destination);
-
-      // Warm Theater Chime Frequencies (C4, E4, G4, C5)
-      const freqs = [261.63, 329.63, 392.00, 523.25];
-      freqs.forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
-
-        const oscGain = ctx.createGain();
-        oscGain.gain.setValueAtTime(0.08, ctx.currentTime + idx * 0.1);
-        oscGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 1.8);
-
-        osc.connect(oscGain);
-        oscGain.connect(masterGain);
-
-        osc.start(ctx.currentTime + idx * 0.1);
-        osc.stop(ctx.currentTime + idx * 0.1 + 2.0);
-      });
-    } catch {
-      // Ignore audio policy errors
+  const toggleSound = () => {
+    const nextMuted = !isSoundMuted;
+    setIsSoundMuted(nextMuted);
+    soundEngine.setMuted(nextMuted);
+    if (!nextMuted) {
+      soundEngine.playPreviewSound();
+      showToast('Sound effects enabled', 'info');
+    } else {
+      showToast('Sound effects muted', 'info');
     }
   };
 
   const handleOpenClick = () => {
     if (!isUnlocked && new Date() < LAUNCH_DATE_IST) {
       showToast('36Route unveils on 5th October 2026 IST. Countdown in progress!', 'info');
+      soundEngine.playCountdownTick(1);
       return;
     }
-    playTheaterSound();
+    soundEngine.playLaunchWhooshAndChime();
     onToggle();
   };
 
   const handleExpire = () => {
     setIsUnlocked(true);
     showToast('Official launch date reached! Click PULL CURTAINS TO ENTER to unveil 36Route.', 'success');
-    playTheaterSound();
+    soundEngine.playLaunchWhooshAndChime();
   };
 
   return (
@@ -191,7 +173,7 @@ export const CurtainReveal: React.FC<CurtainRevealProps> = ({ isOpen, onToggle }
 
         {/* Audio Mute Toggle Button */}
         <button
-          onClick={() => setIsSoundMuted(!isSoundMuted)}
+          onClick={toggleSound}
           className="absolute top-6 right-6 z-40 p-3 rounded-full bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700/80 backdrop-blur-md transition-colors"
           title={isSoundMuted ? 'Unmute theater audio' : 'Mute theater audio'}
         >

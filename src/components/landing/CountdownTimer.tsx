@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { soundEngine } from '../../utils/soundEffects';
 
 // Official Launch Date: 5th October 2026 00:00:00 IST (India Standard Time UTC+05:30)
 export const LAUNCH_DATE_IST = new Date('2026-10-05T00:00:00+05:30');
@@ -8,6 +9,7 @@ interface TimeLeft {
   hours: number;
   minutes: number;
   seconds: number;
+  totalSeconds: number;
 }
 
 interface CountdownTimerProps {
@@ -24,25 +26,40 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
   const calculateTimeLeft = (): TimeLeft => {
     const difference = +targetDate - +new Date();
     if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 };
     }
 
+    const totalSeconds = Math.floor(difference / 1000);
     return {
       days: Math.floor(difference / (1000 * 60 * 60 * 24)),
       hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
       minutes: Math.floor((difference / 1000 / 60) % 60),
       seconds: Math.floor((difference / 1000) % 60),
+      totalSeconds,
     };
   };
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
+  const prevSecondsRef = useRef<number>(timeLeft.totalSeconds);
 
   useEffect(() => {
     const timer = setInterval(() => {
       const remaining = calculateTimeLeft();
       setTimeLeft(remaining);
 
-      if (remaining.days === 0 && remaining.hours === 0 && remaining.minutes === 0 && remaining.seconds === 0) {
+      // Play continuous futuristic digital sound on every second
+      if (remaining.totalSeconds > 0 && remaining.totalSeconds !== prevSecondsRef.current) {
+        if (remaining.totalSeconds <= 10) {
+          // Final 10 seconds anticipation build-up
+          soundEngine.playCountdownTick(remaining.totalSeconds);
+        } else {
+          // Continuous subtle futuristic second tick
+          soundEngine.playRegularSecondTick(remaining.seconds);
+        }
+      }
+      prevSecondsRef.current = remaining.totalSeconds;
+
+      if (remaining.totalSeconds <= 0 && prevSecondsRef.current > 0) {
         if (onExpire) onExpire();
       }
     }, 1000);
