@@ -48,6 +48,22 @@ export default {
           'Inter',
           'sans-serif',
         ],
+        brand: [
+          '"Outfit"',
+          'sans-serif',
+        ],
+        grotesk: [
+          '"Space Grotesk"',
+          'sans-serif',
+        ],
+        syne: [
+          '"Syne"',
+          'sans-serif',
+        ],
+        sora: [
+          '"Sora"',
+          'sans-serif',
+        ],
       },
       boxShadow: {
         'subtle': '0 1px 2px 0 rgba(15, 23, 42, 0.05)',

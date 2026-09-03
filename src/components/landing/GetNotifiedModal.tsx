@@ -70,10 +70,23 @@ export const GetNotifiedModal: React.FC<GetNotifiedModalProps> = ({ isOpen, onCl
 
           <Input
             label="Company Name (Optional)"
-            placeholder="e.g. Acme Logistics"
+            placeholder="e.g. Acme Corporation"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
           />
+
+          <div className="space-y-1">
+            <label className="block text-xs font-semibold text-slate-700">Your Primary Role</label>
+            <select
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-colors"
+              defaultValue="Admin / Manager"
+            >
+              <option value="Admin / Manager">Transport Admin / Logistics Manager</option>
+              <option value="Company Decision Maker">Company HR / FM Executive</option>
+              <option value="Fleet Operator">Vehicle Vendor / Fleet Partner</option>
+              <option value="Employee">Employee Commuter</option>
+            </select>
+          </div>
 
           <div className="pt-2">
             <Button
