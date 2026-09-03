@@ -14,7 +14,7 @@ export const LandingPage: React.FC = () => {
   const [isCurtainOpen, setIsCurtainOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-slate-900 selection:text-white overflow-x-hidden relative">
+    <div className={`h-screen max-h-screen overflow-hidden ${isCurtainOpen ? 'bg-slate-50' : 'bg-slate-950'} text-slate-900 flex flex-col font-sans antialiased selection:bg-slate-900 selection:text-white relative transition-colors duration-700`}>
       {/* 0. THEATRICAL CURTAIN REVEAL OVERLAY WITH LIVE TIMER */}
       <CurtainReveal
         isOpen={isCurtainOpen}

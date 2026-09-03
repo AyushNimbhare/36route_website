@@ -19,7 +19,15 @@ export const CurtainReveal: React.FC<CurtainRevealProps> = ({ isOpen, onToggle }
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    if (!isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   // Web Audio API Theater Chime Sound
   const playTheaterSound = () => {
@@ -72,47 +80,49 @@ export const CurtainReveal: React.FC<CurtainRevealProps> = ({ isOpen, onToggle }
     playTheaterSound();
   };
 
-  if (!isMounted) return null;
-
   return (
     <div
-      className={`fixed inset-0 z-50 overflow-hidden pointer-events-none transition-all duration-700 ${
+      className={`fixed inset-0 z-50 overflow-hidden bg-slate-950 pointer-events-none transition-all duration-700 ${
         isOpen ? 'invisible delay-700' : 'visible'
       }`}
     >
       {/* Dark Stage Backdrop */}
       <div
-        className={`absolute inset-0 bg-slate-950/90 transition-opacity duration-1000 ${
+        className={`absolute inset-0 bg-slate-950 transition-opacity duration-1000 ${
           isOpen ? 'opacity-0' : 'opacity-100'
         }`}
       />
 
-      {/* Left Curtain Half - Full height seamless coverage */}
+      {/* Left Curtain Half - 51vw coverage to eliminate subpixel side gaps */}
       <div
-        className="absolute inset-y-0 left-0 w-1/2 z-20 bg-cover bg-right transition-transform duration-1000 cubic-bezier(0.77, 0, 0.175, 1) pointer-events-auto shadow-2xl"
+        className="absolute inset-y-0 -left-[1vw] w-[51.5vw] z-20 transition-transform duration-1000 cubic-bezier(0.77, 0, 0.175, 1) pointer-events-auto shadow-2xl"
         style={{
           backgroundImage: 'url("/curtain.png")',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
           transform: isOpen ? 'translateX(-100%) scaleX(0.25)' : 'translateX(0%) scaleX(1)',
           transformOrigin: 'left center',
         }}
       >
         {/* Shadow & Fabric Depth Overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/50" />
-        <div className="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black/70 to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black/80 to-transparent" />
       </div>
 
-      {/* Right Curtain Half - Full height seamless coverage */}
+      {/* Right Curtain Half - 51vw coverage to eliminate subpixel side gaps */}
       <div
-        className="absolute inset-y-0 right-0 w-1/2 z-20 bg-cover bg-left transition-transform duration-1000 cubic-bezier(0.77, 0, 0.175, 1) pointer-events-auto shadow-2xl"
+        className="absolute inset-y-0 -right-[1vw] w-[51.5vw] z-20 transition-transform duration-1000 cubic-bezier(0.77, 0, 0.175, 1) pointer-events-auto shadow-2xl"
         style={{
           backgroundImage: 'url("/curtain.png")',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
           transform: isOpen ? 'translateX(100%) scaleX(0.25)' : 'translateX(0%) scaleX(1)',
           transformOrigin: 'right center',
         }}
       >
         {/* Shadow & Fabric Depth Overlays */}
         <div className="absolute inset-0 bg-gradient-to-l from-black/60 via-transparent to-black/50" />
-        <div className="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-black/70 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-black/80 to-transparent" />
       </div>
 
       {/* Subtle Stage Top Shadow Vignette */}
@@ -164,7 +174,7 @@ export const CurtainReveal: React.FC<CurtainRevealProps> = ({ isOpen, onToggle }
             {!isUnlocked ? (
               <>
                 <Lock className="w-5 h-5 text-amber-400 shrink-0 animate-pulse" />
-                <span>LOCKED UNTIL 5TH OCT 2026</span>
+                <span>LOCKED</span>
               </>
             ) : (
               <>
