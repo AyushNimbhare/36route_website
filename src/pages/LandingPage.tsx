@@ -43,7 +43,7 @@ export const LandingPage: React.FC = () => {
 
   const handleLockedClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    showToast('36Route unveils on 5th October 2026 IST. Countdown in progress!', 'info');
+    showToast('36route unveils on 5th October 2026 IST.', 'info');
     soundEngine.playCountdownTick(1);
   };
 
